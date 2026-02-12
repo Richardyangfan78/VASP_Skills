@@ -1,0 +1,39 @@
+# VASP Skills Default Configuration
+
+# Path to POTCAR library directory
+# Each element should have a subdirectory with a POTCAR file
+# e.g., potcar_dir/Si/POTCAR, potcar_dir/O/POTCAR
+potcar_dir: ~/VASP_PP_LIB
+
+# Default POTCAR variant preference order
+potcar_variants:
+  - _pv    # p-valence
+  - _sv    # semi-core
+  - ""     # standard
+
+# Default VASP executable
+vasp_cmd: mpirun -np 4 vasp_std
+vasp_gam_cmd: mpirun -np 4 vasp_gam
+vasp_ncl_cmd: mpirun -np 4 vasp_ncl
+
+# Default calculation settings
+defaults:
+  encut: 520          # eV
+  ediff: 1.0e-6       # eV
+  ediffg: -0.02       # eV/Angstrom
+  ismear: 0           # Gaussian smearing
+  sigma: 0.05         # eV
+  prec: Accurate
+  lreal: Auto
+  ncore: 4
+  kpar: 1
+
+# K-point density (per reciprocal angstrom)
+kpoint_density: 40
+
+# Output settings
+output:
+  figure_dpi: 300
+  figure_format: png
+  band_plot_style: line
+  dos_plot_style: fill
