@@ -1,0 +1,78 @@
+schema_version: 1
+skill:
+  name: vasp_skills
+  version: 0.1.0
+  summary: Agent-oriented VASP automation skill for input generation, workflow execution, validation, parsing, and troubleshooting.
+  domain: computational-materials
+  entrypoint:
+    type: cli
+    command: vasp-skills
+
+capabilities:
+  - id: generate_inputs
+    description: Generate INCAR/POSCAR/KPOINTS/POTCAR for a target calculation type.
+    command: vasp-skills generate <type> -p <poscar> -d <directory>
+    inputs:
+      required: [type, poscar]
+      optional: [directory, encut]
+    outputs:
+      files: [INCAR, POSCAR, KPOINTS, POTCAR]
+
+  - id: validate_inputs
+    description: Validate required files and common INCAR/POSCAR consistency issues.
+    command: vasp-skills validate -d <directory>
+    inputs:
+      required: [directory]
+    outputs:
+      result: validation_report
+      fields: [errors, warnings, is_valid]
+
+  - id: detect_errors
+    description: Detect common VASP runtime errors and propose actionable fixes.
+    command: vasp-skills check -d <directory>
+    inputs:
+      required: [directory]
+    outputs:
+      result: error_report
+      fields: [error, suggestion, file, count]
+
+  - id: parse_results
+    description: Parse common physical quantities from VASP outputs.
+    command: vasp-skills parse <energy|forces|gap|summary> -d <directory>
+    inputs:
+      required: [what, directory]
+    outputs:
+      result: parsed_metrics
+
+  - id: run_workflow
+    description: Build and execute predefined multi-step workflows.
+    command: vasp-skills workflow <bandstructure|relax|magnetic> -p <poscar> -d <directory>
+    inputs:
+      required: [type, poscar]
+      optional: [directory, write-only]
+    outputs:
+      result: workflow_status
+
+reliability:
+  deterministic_defaults: true
+  validation_before_run: recommended
+  supports_recovery_hints: true
+
+constraints:
+  - VASP executable and license must exist in runtime environment.
+  - POTCAR library path must be configured.
+
+failure_policy:
+  argument_error: fail_fast
+  input_missing: return_validation_errors
+  runtime_error: return_error_suggestions
+
+observability:
+  logs: stdout
+  artifacts:
+    - INCAR
+    - POSCAR
+    - KPOINTS
+    - POTCAR
+    - OUTCAR
+    - OSZICAR

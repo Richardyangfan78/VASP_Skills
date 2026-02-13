@@ -3,6 +3,7 @@
 import argparse
 import sys
 from pathlib import Path
+import numpy as np
 
 
 def cmd_generate(args):
@@ -90,7 +91,6 @@ def cmd_parse(args):
         forces = parser.get_forces()
         if forces.size > 0:
             max_f = max(float(np.linalg.norm(f)) for f in forces)
-            import numpy as np
             print(f"Max force: {max_f:.6f} eV/A")
             print(f"Atoms: {len(forces)}")
         else:
